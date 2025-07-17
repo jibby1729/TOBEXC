@@ -1,26 +1,40 @@
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import ListingPage from './pages/ListingPage';
+import SearchResultsPage from './pages/SearchResultsPage';
+import NotFoundPage from './pages/NotFoundPage';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-blue-600 mb-4">
-          TOBEXC
-        </h1>
-        <p className="text-lg text-gray-700">
-          University of Toronto Used Book Marketplace
-        </p>
-        <div className="mt-8 space-x-4">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Browse Books
-          </button>
-          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Sell Books
-          </button>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/listing/:id" element={<ListingPage />} />
+              <Route path="/search" element={<SearchResultsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </main>
+          <Footer />
         </div>
-      </div>
-    </div>
-  )
+      </Router>
+    </QueryClientProvider>
+  );
 }
 
 export default App
